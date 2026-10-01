@@ -2,7 +2,7 @@
 import { onMounted,ref } from 'vue';
 import TrackList from './components/TrackList.vue';
 import { tracks } from './data/tracks';
-import { usePlayerStore } from './stores/player.ts';
+import { usePlayerStore } from './stores/player';
 import PlayerPanel from './components/PlayerPanel.vue';
 
 
@@ -24,6 +24,10 @@ onMounted(()=>{
   preload="metadata"
   @play="player.onPlay()"
   @pause="player.onPause()"
+  @ended="player.onEnded()"
+  @timeupdate="player.onTimeUpdate()"
+  @loadedmetadata="player.onLoadedMetadata()"
+  @volumechange="player.onVolumeChange()"
   />
 </template>
 
