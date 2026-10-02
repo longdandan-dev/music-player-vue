@@ -1,0 +1,53 @@
+/* 复用的设计令牌（沿用待办清单那套，不重新设计） */
+:root {
+  --brand: #2563eb;
+  --text: #0f172a;
+  --muted: #64748b;
+  --line: #e2e8f0;
+  --bg: #f8fafc;
+  --pad: 16px;
+  --radius: 8px;
+}
+
+* { box-sizing: border-box; }     /* 让 padding/border 算进宽度，不然宽度会算崩 */
+
+body {
+  margin: 0;                      /* 干掉浏览器默认的 8px 外边距 */
+  padding: var(--pad);
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+  line-height: 1.6;
+}
+
+h1 { font-size: 20px; margin: 0 0 12px; }   /* 默认 h1 太大了，手机上会顶满一行 */
+
+/* 工具栏：搜索框 + 只看收藏 */
+.toolbar { display: flex; align-items: center; margin-bottom: 12px; }
+
+/* 列表：干掉默认的圆点和缩进 */
+.track-list { list-style: none; margin: 0; padding: 0; }
+
+/* 列表行 */
+.track {
+  display: flex;
+  align-items: center;
+  gap: 8px;                       /* 每一项之间留 8px（4 的倍数） */
+  padding: 8px;
+  border-bottom: 1px solid var(--line);
+}
+.track-index { width: 20px; color: var(--muted); font-size: 13px; }
+.track-title { font-weight: 600; }
+.track-meta {
+  color: var(--muted);
+  font-size: 13px;
+  flex: 1;                        /* 占掉中间剩下的宽度 */
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;  /* 太长就省略号 */
+}
+.track-duration { color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+
+/* 820 及以下：手机上砍掉次要信息 */
+@media (max-width: 820px) {
+  .track-index { display: none; }   /* 序号最先砍 */
+  .track-meta { display: none; }    /* 歌手·专辑也砍 */
+}

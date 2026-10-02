@@ -19,10 +19,12 @@ const player = usePlayerStore()
     <span class="track-title">{{ props.track.title }}</span>
     <span class="track-meta">{{ props.track.artist }} · {{ props.track.album }}</span>
     <span class="track-duration">{{ formatTime(props.track.duration) }}</span>
+    <button class="fav" type="button" @click.stop="player.toggleFav(props.track.id)">
+        {{ player.favIds.includes(props.track.id) ? '♥' : '♡' }}</button>
     </li>
 </template>
 <style scoped>
-.track-cover {
+.track-cover { 
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -35,4 +37,11 @@ const player = usePlayerStore()
 }
 .track{cursor: pointer;}
 .track.playing{font-weight:700}
+.fav {
+  margin-left: 8px;      /* 和前面的信息拉开一点 */
+  border: none;          /* 去掉按钮默认边框 */
+  background: none;      /* 去掉按钮默认底色 */
+  cursor: pointer;       /* 鼠标变手型 */
+  font-size: 16px;       /* 图标大一号，好点 */
+}
 </style>

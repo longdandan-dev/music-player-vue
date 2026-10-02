@@ -1,7 +1,19 @@
 import { tracks } from "@/data/tracks";
 import {defineStore } from "pinia";
-import { computed, ref } from "vue";
+import { computed, ref,watch } from "vue";
 import { formatTime } from "@/utils/format";
+
+const STORAGE_KEY = 'music-player:fav'
+
+function readFavIds(): string[] {
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY)
+        if (!raw) return []
+        return JSON.parse(raw) as string[]
+    } catch {
+        return []
+    }
+}
 
 export const usePlayerStore = defineStore('player',()=>{
     type LoopMode = 'list' | 'single' | 'none'
@@ -19,6 +31,7 @@ export const usePlayerStore = defineStore('player',()=>{
     let isSeeking = false
     const volume = ref(1)
     const muted =ref(false)
+    const favIds = ref<string[]>(readFavIds())
 
     const loopMode = ref<LoopMode>('list')
     const loopText = computed(()=> LOOP_MODES[loopMode.value].text)
@@ -137,11 +150,24 @@ export const usePlayerStore = defineStore('player',()=>{
         if(!el)return 
         setVolume(Number(el.value))
     }
+    function toggleFav(id:string){
+        if(favIds.value.includes(id)){
+            favIds.value =favIds.value.filter((x) => x!== id)
+        }
+        else {
+            favIds.value.push(id)
+        }
+    }
+    
+    watch(favIds,(newIds)=>{
+        localStorage.setItem(STORAGE_KEY,JSON.stringify(newIds))
+    },{deep:true})
+
     return {currentId,isPlaying,currentTrack,currentIndex,
         selectTrack,togglePlay,bindAudio,onPlay,onPause,
         playPrev,playNext,onEnded,loopMode,loopText,cycleLoopMode,
         onTimeUpdate,onLoadedMetadata,currentTime,duration,durationText,currentTimeText,
         progressPercent,seekTo,onSeek,onSeekStart,onVolumeChange,volume,muted,
-        setVolume,toggleMute,isMuted,onVolumeInput
+        setVolume,toggleMute,isMuted,onVolumeInput,toggleFav,favIds
     }
 })
