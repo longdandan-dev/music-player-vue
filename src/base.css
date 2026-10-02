@@ -1,53 +1,194 @@
-/* 复用的设计令牌（沿用待办清单那套，不重新设计） */
+/* ===== 设计令牌（沿用阶段 2 音乐播放器 v1 的深色方案，不重新设计）===== */
 :root {
-  --brand: #2563eb;
+  /* 底色与层次 */
+  --bg: #f1f5f9;
+  --panel: #ffffff;
+  --panel-2: #f8fafc;
+  --border: #e2e8f0;
+
+  /* 文字三档 */
   --text: #0f172a;
-  --muted: #64748b;
-  --line: #e2e8f0;
-  --bg: #f8fafc;
-  --pad: 16px;
-  --radius: 8px;
+  --text-2: #475569;
+  --text-dim: #64748b;
+
+  /* 主色与副色 */
+  --accent: #3b6df5;
+  --accent-2: #22d3ee;
+  --accent-light: #1d4ed8;
+  --accent-deep: #2f5fd0;
+  --accent-soft: rgba(59, 109, 245, 0.10);
+  --accent-ring: rgba(59, 109, 245, 0.22);
+  --on-accent: #ffffff;
+  --glow: rgba(59, 109, 245, 0.30);
+
+  /* 状态色 */
+  --danger: #dc2626;
+  --danger-bg: #fef2f2;
+  --danger-text: #991b1b;
+
+  /* 形状与阴影 */
+  --radius: 14px;
+  --radius-sm: 8px;
+  --shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
+  --shadow-cover: 0 8px 22px rgba(0, 0, 0, 0.4);
+
+  /* 间距（一律 4 的倍数） */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+
+  /* 字号阶梯：只允许这几档 */
+  --fs-xs: 12px;
+  --fs-sm: 13px;
+  --fs-md: 16px;
+  --fs-lg: 18px;
+  --fs-xl: 20px;
+  --fs-2xl: 22px;
+
+  --max-w: 1200px;
+  --spinner-track: rgba(255, 255, 255, 0.35);
 }
 
-* { box-sizing: border-box; }     /* 让 padding/border 算进宽度，不然宽度会算崩 */
+* { box-sizing: border-box; }
 
 body {
-  margin: 0;                      /* 干掉浏览器默认的 8px 外边距 */
-  padding: var(--pad);
+  margin: 0;
+  padding: var(--sp-5) var(--sp-4) var(--sp-6);
+  min-height: 100vh;
   background: var(--bg);
   color: var(--text);
-  font-family: system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
-  line-height: 1.6;
+  font: var(--fs-md) / 1.6 system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
 }
 
-h1 { font-size: 20px; margin: 0 0 12px; }   /* 默认 h1 太大了，手机上会顶满一行 */
+h1 {
+  margin: 0 0 var(--sp-5);
+  font-size: var(--fs-2xl);
+}
+
+/* 卡片：母题 ①「顶部 3px 主色渐变条」在这里统一生效 */
+section {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: var(--sp-4);
+  padding: var(--sp-5);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+section::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+}
 
 /* 工具栏：搜索框 + 只看收藏 */
-.toolbar { display: flex; align-items: center; margin-bottom: 12px; }
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-4);
+}
 
-/* 列表：干掉默认的圆点和缩进 */
-.track-list { list-style: none; margin: 0; padding: 0; }
+.only-fav {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+  cursor: pointer;
+}
 
-/* 列表行 */
+/* 列表 */
+.track-list { margin: 0; padding: 0; list-style: none; }
+
 .track {
   display: flex;
   align-items: center;
-  gap: 8px;                       /* 每一项之间留 8px（4 的倍数） */
-  padding: 8px;
-  border-bottom: 1px solid var(--line);
+  gap: var(--sp-3);
+  padding: var(--sp-3) 0;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
-.track-index { width: 20px; color: var(--muted); font-size: 13px; }
+.track:last-child { border-bottom: none; }
+
+.track-index {
+  width: 20px;
+  color: var(--text-dim);
+  font-size: var(--fs-sm);
+  font-variant-numeric: tabular-nums;
+}
 .track-title { font-weight: 600; }
 .track-meta {
-  color: var(--muted);
-  font-size: 13px;
-  flex: 1;                        /* 占掉中间剩下的宽度 */
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;  /* 太长就省略号 */
+  flex: 1;
+  color: var(--text-dim);
+  font-size: var(--fs-sm);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.track-duration { color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+.track-duration {
+  color: var(--text-dim);
+  font-size: var(--fs-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 母题 ②「正在播放的一行：左侧 3px 竖条 + 浅主色底」 */
+.track.playing,
+.track.is-current {
+  background: var(--accent-soft);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+/* 按钮：只做"去默认"这一层，具体形态由各组件决定 */
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  border: 0;
+  background: none;
+  transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+input[type='checkbox'] { accent-color: var(--accent); }
+
+/* 状态文字：加载中 / 空 / 错误 */
+.state {
+  padding: var(--sp-5) 0;
+  text-align: center;
+  color: var(--text-dim);
+}
+.state-error {
+  padding: var(--sp-3);
+  border: 1px solid var(--danger);
+  border-radius: var(--radius-sm);
+  background: var(--danger-bg);
+  color: var(--danger-text);
+}
+
+/* 仓库列表（接口页） */
+.repo-list { margin: 0; padding: 0; list-style: none; }
+.repo {
+  padding: var(--sp-3) 0;
+  border-bottom: 1px solid var(--border);
+}
+.repo:last-child { border-bottom: none; }
+.repo a { color: var(--accent-light); font-weight: 600; text-decoration: none; }
+.repo a:hover { text-decoration: underline; }
+.repo .stars { margin-left: var(--sp-2); color: var(--text-dim); font-size: var(--fs-sm); }
+.repo .desc { margin: var(--sp-1) 0 0; color: var(--text-dim); font-size: var(--fs-sm); }
 
 /* 820 及以下：手机上砍掉次要信息 */
 @media (max-width: 820px) {
-  .track-index { display: none; }   /* 序号最先砍 */
-  .track-meta { display: none; }    /* 歌手·专辑也砍 */
+  body { padding: var(--sp-4) var(--sp-3) var(--sp-5); }
+  .track-index { display: none; }
+  .track-meta { display: none; }
 }

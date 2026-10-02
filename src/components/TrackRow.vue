@@ -24,24 +24,31 @@ const player = usePlayerStore()
     </li>
 </template>
 <style scoped>
-.track-cover { 
+.track-cover {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
-  color: #fff;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  color: var(--on-accent);
+  font-size: var(--fs-lg);
   font-weight: 700;
   background: linear-gradient(135deg, var(--c1), var(--c2));
+  box-shadow: var(--shadow-cover);
+  transition: transform 0.2s ease;
 }
-.track{cursor: pointer;}
-.track.playing{font-weight:700}
+.track:hover { background: var(--panel-2); }
+.track:hover .track-cover { transform: scale(1.06); }
+.track.playing .track-title { color: var(--accent-light); }
+
 .fav {
-  margin-left: 8px;      /* 和前面的信息拉开一点 */
-  border: none;          /* 去掉按钮默认边框 */
-  background: none;      /* 去掉按钮默认底色 */
-  cursor: pointer;       /* 鼠标变手型 */
-  font-size: 16px;       /* 图标大一号，好点 */
+  margin-left: var(--sp-2);
+  padding: 0 var(--sp-1);
+  color: var(--text-dim);
+  font-size: var(--fs-lg);
+  line-height: 1;
 }
+.fav:hover { color: var(--accent); }
 </style>
